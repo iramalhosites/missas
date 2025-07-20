@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ordem da Missa</title>
+      <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+      <style>
+                * {
+                              margin: 0;
+                              padding: 0;
+                              box-sizing: border-box;
+                }
+
+                body {
+                              font-family: 'Ubuntu Mono', monospace;
+                              background: linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2d4a2d 50%, #1a1a1a 75%, #000000 100%);
+                              min-height: 100vh;
+                              color: white;
+                              padding: 20px;
+                }
+
+                .container {
+                              max-width: 800px;
+                              margin: 0 auto;
+                }
+
+                .glass-panel {
+                              background: rgba(255, 255, 255, 0.1);
+                              backdrop-filter: blur(10px);
+                              border-radius: 20px;
+                              border: 1px solid rgba(255, 255, 255, 0.2);
+                              padding: 25px;
+                              margin-bottom: 25px;
+                              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                }
+
+                .title {
+                              text-align: center;
+                              font-size: 2.5rem;
+                              font-weight: 700;
+                              margin-bottom: 30px;
+                              color: #f0f0f0;
+                              text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+                }
+
+                .section-title {
+                              font-size: 1.5rem;
+                              font-weight: 700;
+                              margin-bottom: 20px;
+                              color: #e6e600;
+                              text-shadow: 0 0 10px rgba(230, 230, 0, 0.5);
+                              text-align: center;
+                }
+
+                .form-group {
+                              display: flex;
+                              gap: 15px;
+                              margin-bottom: 20px;
+                              flex-wrap: wrap;
+                              align-items: center;
+                }
+
+                .form-group input,
+                .form-group select {
+                              background: rgba(255, 255, 255, 0.1);
+                              border: 1px solid rgba(255, 255, 255, 0.3);
+                              border-radius: 10px;
+                              padding: 12px 15px;
+                              color: white;
+                              font-family: 'Ubuntu Mono', monospace;
+                              font-size: 1rem;
+                              flex: 1;
+                              min-width: 150px;
+                }
+
+                .form-group input::placeholder {
+                              color: rgba(255, 255, 255, 0.6);
+                }
+
+                .form-group select option {
+                              background: #1a1a1a;
+                              color: white;
+                }
+
+                .btn {
+                              background: linear-gradient(135deg, #4CAF50, #45a049);
+                              border: none;
+                              border-radius: 10px;
+                              padding: 12px 20px;
+                              color: white;
+                              font-family: 'Ubuntu Mono', monospace;
+                              font-size: 1rem;
+                              font-weight: 700;
+                              cursor: pointer;
+                              transition: all 0.3s ease;
+                              box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+                }
+
+                .btn:hover {
+                              transform: translateY(-2px);
+                              box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+                }
+
+                .btn-secondary {
+                              background: linear-gradient(135deg, #e6e600, #cccc00);
+                              color: #000;
+                              box-shadow: 0 4px 15px rgba(230, 230, 0, 0.3);
+                }
+
+                .btn-secondary:hover {
+                              box-shadow: 0 6px 20px rgba(230, 230, 0, 0.4);
+                }
+
+                .btn-danger {
+                              background: linear-gradient(135deg, #f44336, #d32f2f);
+                              box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+                }
+
+                .btn-danger:hover {
+                              box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+                }
+
+                .cantico-item {
+                              background: rgba(255, 255, 255, 0.08);
+                              border: 1px solid rgba(255, 255, 255, 0.2);
+                              border-radius: 15px;
+                              padding: 15px;
+                              margin-bottom: 10px;
+                              display: flex;
+                              justify-content: space-between;
+                              align-items: center;
+                              cursor: move;
+                              transition: all 0.3s ease;
+                              position: relative;
+                }
+
+                .cantico-item:hover {
+                              background: rgba(255, 255, 255, 0.15);
+                              transform: translateY(-2px);
+                              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                }
+
+                .cantico-item.dragging {
+                              opacity: 0.5;
+                              transform: rotate(5deg);
+                }
+
+                .cantico-info {
+                              flex: 1;
+                }
+
+                .cantico-nome {
+                              font-weight: 700;
+                              font-size: 1.1rem;
+                              color: #f0f0f0;
+                              margin-bottom: 5px;
+                }
+
+                .cantico-detalhes {
+                              font-size: 0.9rem;
+                              color: #e6e600;
+                }
+
+                .cantico-actions {
+                              display: flex;
+                              gap: 10px;
+                }
+
+                .btn-small {
+                              padding: 8px 12px;
+                              font-size: 0.8rem;
+                              min-width: auto;
+                }
+
+                .controls {
+                              display: flex;
+                              gap: 15px;
+                              justify-content: center;
+                              flex-wrap: wrap;
+                              margin-top: 20px;
+                }
+
+                .auto-save-info {
+                              text-align: center;
+                              color: #e6e600;
+                              font-size: 0.9rem;
+                              margin-top: 15px;
+                              opacity: 0.8;
+                }
+
+                .drag-handle {
+                              color: rgba(255, 255, 255, 0.5);
+                              font-size: 1.2rem;
+                              margin-right: 10px;
+                              cursor: grab;
+                }
+
+                .drag-handle:active {
+                              cursor: grabbing;
+                }
+
+                .empty-state {
+                              text-align: center;
+                              color: rgba(255, 255, 255, 0.6);
+                              font-style: italic;
+                              padding: 40px 20px;
+                }
+
+                @media (max-width: 768px) {
+                              .container {
+                                                padding: 10px;
+                              }
+
+                              .title {
+                                                font-size: 2rem;
+                              }
+
+                              .form-group {
+                                                flex-direction: column;
+                              }
+
+                              .form-group input,
+                              .form-group select {
+                                                min-width: 100%;
+                              }
+
+                              .cantico-item {
+                                                flex-direction: column;
+                                                align-items: flex-start;
+                                                gap: 10px;
+                              }
+
+                              .cantico-actions {
+                                                width: 100%;
+                                                justify-content: flex-end;
+                              }
+
+                              .controls {
+                                                flex-direction: column;
+                              }
+                }
+
+                /* Animações */
+                @keyframes fadeIn {
+                              from { opacity: 0; transform: translateY(20px); }
+                              to { opacity: 1; transform: translateY(0); }
+                }
+
+                .cantico-item {
+                              animation: fadeIn 0.3s ease;
+                }
+
+                /* Efeito de brilho nos botões */
+                .btn::before {
+                              content: '';
+                              position: absolute;
+                              top: 0;
+                              left: -100%;
+                              width: 100%;
+                              height: 100%;
+                              background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                              transition: left 0.5s;
+                }
+
+                .btn:hover::before {
+                              left: 100%;
+                }
+
+                .btn {
+                              position: relative;
+                              overflow: hidden;
+                }
+            </style>
+  </head>
+  <body>
+        <div class="container">
+                  <h1 class="title">Ordem da Missa</h1>h1>
+
+                  <!-- Seção para adicionar cânticos -->
+                  <div class="glass-panel">
+                                <h2 class="section-title">Lista de Cânticos</h2>h2>
+                                <div class="form-group">
+                                                  <input type="text" id="nomeCantico" placeholder="Nome do Cântico" maxlength="100">
+                                                  <select 
+  </body>
+      </style></title>
+  </head>
