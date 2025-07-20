@@ -1,1 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem da Missa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2d4a2d 50%, #1a1a1a 75%, #000000 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #f0f0f0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #e6e600;
+            text-shadow: 0 0 10px rgba(230, 230, 0, 0.5);
+            text-align: center;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e6e600, #cccc00);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(230, 230, 0, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(230, 230, 0, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+
+        .cantico-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .cantico-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cantico-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .cantico-info {
+            flex: 1;
+        }
+
+        .cantico-nome {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f0f0f0;
+            margin-bottom: 5px;
+        }
+
+        .cantico-detalhes {
+            font-size: 0.9rem;
+            color: #e6e600;
+        }
+
+        .cantico-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            min-width: auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .auto-save-info {
+            text-align: center;
+            color: #e6e600;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+
+        .drag-handle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.2rem;
+            margin-right: 10px;
+            cursor: grab;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .form-group {
+                flex-direction: column;
+            }
+            
+            .form-group input,
+            .form-group select {
+                min-width: 100%;
+            }
+            
+            .cantico-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .cantico-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Efeito de brilho nos botões */
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Ordem da Missa</h1>
+        
+        <!-- Seção para adicionar cânticos -->
+        <div class="glass-panel">
+            <h2 class="section-title">Adicionar Cânticos</h2>
+            <div class="form-group">
+                <input type="text" id="nomeCantico" placeholder="Nome do Cântico" maxlength="100">
+                <select id="tipoCantico">
+                    <option value="Entrada">Entrada</option>
+                    <option value="Aclamação">Aclamação</option>
+                    <option value="Ofertório">Ofertório</option>
+                    <option value="Santo">Santo</option>
+                    <option value="Comunhão">Comunhão</option>
+                    <option value="Final">Final</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                <select id="tomCantico">
+                    <option value="C">C</option>
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                    <option value="Dm">Dm</option>
+                    <option value="Em">Em</option>
+                    <option value="Am">Am</option>
+                    <option value="Bm">Bm</option>
+                </select>
+                <button class="btn" onclick="adicionarCantico()">Adicionar</button>
+            </div>
+        </div>
+
+        <!-- Seção de cânticos selecionados -->
+        <div class="glass-panel">
+            <h2 class="section-title">Cânticos Selecionados</h2>
+            <div id="canticosSelecionados">
+                <div class="empty-state">
+                    Nenhum cântico adicionado ainda. Use o formulário acima para adicionar cânticos.
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles de salvar/carregar -->
+        <div class="glass-panel">
+            <h2 class="section-title">Salvar e Carregar Configurações</h2>
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="salvarConfiguracao()">💾 Salvar</button>
+                <button class="btn btn-secondary" onclick="carregarConfiguracao()">📁 Carregar</button>
+                <button class="btn btn-danger" onclick="novaRelacao()">🆕 Novo</button>
+            </div>
+            <div class="auto-save-info" id="autoSaveInfo">
+                Auto-salvo: <span id="autoSaveTime">Nunca</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input oculto para carregar arquivos -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="carregarArquivo(event)">
+
+    <script>
+        let canticos = [];
+        let draggedElement = null;
+        let autoSaveInterval;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarAutoSave();
+            iniciarAutoSave();
+            
+            // Adicionar evento de tecla Enter nos campos de input
+            document.getElementById('nomeCantico').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    adicionarCantico();
+                }
+            });
+        });
+
+        // Função para adicionar cântico
+        function adicionarCantico() {
+            const nome = document.getElementById('nomeCantico').value.trim();
+            const tipo = document.getElementById('tipoCantico').value;
+            const tom = document.getElementById('tomCantico').value;
+
+            if (!nome) {
+                alert('Por favor, digite o nome do cântico.');
+                return;
+            }
+
+            const cantico = {
+                id: Date.now(),
+                nome: nome,
+                tipo: tipo,
+                tom: tom
+            };
+
+            canticos.push(cantico);
+            document.getElementById('nomeCantico').value = '';
+            atualizarLista();
+            salvarAutoSave();
+        }
+
+        // Função para atualizar a lista de cânticos
+        function atualizarLista() {
+            const container = document.getElementById('canticosSelecionados');
+            
+            if (canticos.length === 0) {
+                container.innerHTML = '<div class="empty-state">Nenhum cântico adicionado ainda. Use o formulário acima para adicionar cânticos.</div>';
+                return;
+            }
+
+            container.innerHTML = canticos.map((cantico, index) => `
+                <div class="cantico-item" draggable="true" data-id="${cantico.id}" data-index="${index}">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="cantico-info">
+                        <div class="cantico-nome">${cantico.nome}</div>
+                        <div class="cantico-detalhes">${cantico.tipo} - ${cantico.tom}</div>
+                    </div>
+                    <div class="cantico-actions">
+                        <button class="btn btn-small btn-secondary" onclick="editarCantico(${cantico.id})">✏️</button>
+                        <button class="btn btn-small btn-danger" onclick="excluirCantico(${cantico.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Adicionar eventos de drag and drop
+            adicionarEventosDragDrop();
+        }
+
+        // Função para adicionar eventos de drag and drop
+        function adicionarEventosDragDrop() {
+            const items = document.querySelectorAll('.cantico-item');
+            
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        // Eventos de drag and drop
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (this !== draggedElement) {
+                const draggedIndex = parseInt(draggedElement.dataset.index);
+                const targetIndex = parseInt(this.dataset.index);
+                
+                // Reordenar array
+                const draggedItem = canticos.splice(draggedIndex, 1)[0];
+                canticos.splice(targetIndex, 0, draggedItem);
+                
+                atualizarLista();
+                salvarAutoSave();
+            }
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        // Função para editar cântico
+        function editarCantico(id) {
+            const cantico = canticos.find(c => c.id === id);
+            if (!cantico) return;
+
+            const novoNome = prompt('Novo nome do cântico:', cantico.nome);
+            if (novoNome === null) return;
+
+            const novoTipo = prompt('Novo tipo do cântico:', cantico.tipo);
+            if (novoTipo === null) return;
+
+            const novoTom = prompt('Novo tom do cântico:', cantico.tom);
+            if (novoTom === null) return;
+
+            cantico.nome = novoNome.trim() || cantico.nome;
+            cantico.tipo = novoTipo.trim() || cantico.tipo;
+            cantico.tom = novoTom.trim() || cantico.tom;
+
+            atualizarLista();
+            salvarAutoSave();
+        }
+
+        // Função para excluir cântico
+        function excluirCantico(id) {
+            if (confirm('Tem certeza que deseja excluir este cântico?')) {
+                canticos = canticos.filter(c => c.id !== id);
+                atualizarLista();
+                salvarAutoSave();
+            }
+        }
+
+        // Função para salvar configuração
+        function salvarConfiguracao() {
+            if (canticos.length === 0) {
+                alert('Não há cânticos para salvar.');
+                return;
+            }
+
+            const configuracao = {
+                canticos: canticos,
+                dataHora: new Date().toLocaleString('pt-BR'),
+                versao: '1.0'
+            };
+
+            const blob = new Blob([JSON.stringify(configuracao, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ordem_missa_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Função para carregar configuração
+        function carregarConfiguracao() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Função para carregar arquivo
+        function carregarArquivo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const configuracao = JSON.parse(e.target.result);
+                    if (configuracao.canticos && Array.isArray(configuracao.canticos)) {
+                        canticos = configuracao.canticos;
+                        atualizarLista();
+                        salvarAutoSave();
+                        alert('Configuração carregada com sucesso!');
+                    } else {
+                        alert('Arquivo inválido.');
+                    }
+                } catch (error) {
+                    alert('Erro ao carregar arquivo: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Limpar o input para permitir carregar o mesmo arquivo novamente
+            event.target.value = '';
+        }
+
+        // Função para nova relação
+        function novaRelacao() {
+            if (canticos.length > 0 && confirm('Tem certeza que deseja criar uma nova relação? Os cânticos atuais serão perdidos.')) {
+                canticos = [];
+                atualizarLista();
+                salvarAutoSave();
+            } else if (canticos.length === 0) {
+                alert('Já não há cânticos na lista.');
+            }
+        }
+
+        // Auto-save functions
+        function salvarAutoSave() {
+            const autoSave = {
+                canticos: canticos,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('ordem_missa_autosave', JSON.stringify(autoSave));
+            atualizarInfoAutoSave();
+        }
+
+        function carregarAutoSave() {
+            const autoSave = localStorage.getItem('ordem_missa_autosave');
+            if (autoSave) {
+                try {
+                    const data = JSON.parse(autoSave);
+                    // Não carregar automaticamente, apenas manter disponível
+                    atualizarInfoAutoSave();
+                } catch (error) {
+                    console.error('Erro ao carregar auto-save:', error);
+                }
+            }
+        }
+
+        function atualizarInfoAutoSave() {
+            const autoSave = localStorage.getItem('ordem_missa_autosave');
+            const timeElement = document.getElementById('autoSaveTime');
+            
+            if (autoSave) {
+                try {
+                    const data = JSON.parse(autoSave);
+                    const date = new Date(data.timestamp);
+                    timeElement.textContent = date.toLocaleString('pt-BR');
+                } catch (error) {
+                    timeElement.textContent = 'Erro';
+                }
+            } else {
+                timeElement.textContent = 'Nunca';
+            }
+        }
+
+        function iniciarAutoSave() {
+            // Auto-save a cada 30 segundos se houver mudanças
+            autoSaveInterval = setInterval(() => {
+                if (canticos.length > 0) {
+                    salvarAutoSave();
+                }
+            }, 30000);
+        }
+
+        // Evento antes de fechar a página
+        window.addEventListener('beforeunload', function(e) {
+            if (canticos.length > 0) {
+                const message = 'Você tem cânticos não salvos. Deseja realmente sair?';
+                e.returnValue = message;
+                return message;
+            }
+        });
+
+        // Limpar auto-save interval quando a página for fechada
+        window.addEventListener('unload', function() {
+            if (autoSaveInterval) {
+                clearInterval(autoSaveInterval);
+            }
+        });
+    </script>
+</body>
+</html>
